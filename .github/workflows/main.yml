@@ -1,15 +1,13 @@
 name: CI-CD-With-n8n
 
 on:
-  workflow_dispatch:
-    inputs:
-      resumeUrl:
-        required: true
-
+  push:
+    branches:
+      - main
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,4 +52,3 @@ jobs:
             "actor": "${{ github.actor }}",
             "env": "production"
           }'
-  
