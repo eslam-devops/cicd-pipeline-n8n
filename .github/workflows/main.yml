@@ -26,29 +26,11 @@ jobs:
         run: |
           echo "🚀 Deploying to production..."
           sleep 2
-
-      - name: Notify n8n (Success)
-        if: success()
+          
+      - name: Notify n8n
+        if: always()
         run: |
-          curl -X POST ${{ secrets.N8N_WEBHOOK_URL }} \
+          STATUS=${{ job.status }}
+          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}" \
           -H "Content-Type: application/json" \
-          -d '{
-            "status": "success",
-            "repo": "${{ github.repository }}",
-            "commit": "${{ github.sha }}",
-            "actor": "${{ github.actor }}",
-            "env": "production"
-          }'
-
-      - name: Notify n8n (Failure)
-        if: failure()
-        run: |
-          curl -X POST ${{ secrets.N8N_WEBHOOK_URL }} \
-          -H "Content-Type: application/json" \
-          -d '{
-            "status": "failure",
-            "repo": "${{ github.repository }}",
-            "commit": "${{ github.sha }}",
-            "actor": "${{ github.actor }}",
-            "env": "production"
-          }'
+          -d "{\"status\":\"$STATUS\",\"repo\":\"${{ github.repository }}\",\"commit\":\"${{ github.sha }}\",\"actor\":\"${{ github.actor }}\",\"env\":\"production\"}"
