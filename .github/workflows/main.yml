@@ -29,7 +29,7 @@ jobs:
       - name: Notify n8n (Success)
         if: success()
         run: |
-          curl -X  POST "http://ec2-34-231-244-17.compute-1.amazonaws.com:5678/webhook/b4bedb3f-8035-4231-b70c-f5f6d531e7f5" \
+          curl -X  POST "${{ secrets.N8N_WEBHOOK_URL }}" \
           -H "Content-Type: application/json" \
           -d '{
             "status": "success",
@@ -42,7 +42,7 @@ jobs:
       - name: Notify n8n (Failure)
         if: failure()
         run: |
-          curl -X  POST "http://ec2-34-231-244-17.compute-1.amazonaws.com:5678/webhook/b4bedb3f-8035-4231-b70c-f5f6d531e7f5" \
+          curl -X  POST "${{ secrets.N8N_WEBHOOK_URL }}" \
           -H "Content-Type: application/json" \
           -d '{
             "status": "failure",
@@ -51,10 +51,4 @@ jobs:
             "actor": "${{ github.actor }}",
             "env": "production"
           }'
-      - name: Notify n8n
-        if: always()
-        run: |
-          STATUS=${{ job.status }}
-          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}" \
-          -H "Content-Type: application/json" \
-          -d "{\"status\":\"$STATUS\",\"repo\":\"${{ github.repository }}\",\"commit\":\"${{ github.sha }}\",\"actor\":\"${{ github.actor }}\",\"env\":\"production\"}"
+     
