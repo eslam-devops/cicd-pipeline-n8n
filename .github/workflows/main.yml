@@ -26,17 +26,36 @@ jobs:
         run: |
           echo "🚀 Deploying to production..."
           sleep 2
-          
-       - name: Notify n8n
+
+      - name: Notify n8n (Success)
+        if: success()
+        run: |
+          curl -X POST ${{ secrets.N8N_WEBHOOK_URL }} \
+          -H "Content-Type: application/json" \
+          -d '{
+            "status": "success",
+            "repo": "${{ github.repository }}",
+            "commit": "${{ github.sha }}",
+            "actor": "${{ github.actor }}",
+            "env": "production"
+          }'
+
+      - name: Notify n8n (Failure)
+        if: failure()
+        run: |
+          curl -X POST ${{ secrets.N8N_WEBHOOK_URL }} \
+          -H "Content-Type: application/json" \
+          -d '{
+            "status": "failure",
+            "repo": "${{ github.repository }}",
+            "commit": "${{ github.sha }}",
+            "actor": "${{ github.actor }}",
+            "env": "production"
+          }'
+      - name: Notify n8n
         if: always()
         run: |
           STATUS=${{ job.status }}
-          RAW_URL="${{ secrets.N8N_WEBHOOK_URL }}"
-          WEBHOOK_URL=$(echo "$RAW_URL" | tr -d '\r' | tr -d '\n' | xargs)
-          
-          echo "Sending to: $WEBHOOK_URL"
-          
-          curl --fail --show-error --location \
-          -X POST "$WEBHOOK_URL" \
+          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}" \
           -H "Content-Type: application/json" \
           -d "{\"status\":\"$STATUS\",\"repo\":\"${{ github.repository }}\",\"commit\":\"${{ github.sha }}\",\"actor\":\"${{ github.actor }}\",\"env\":\"production\"}"
