@@ -30,7 +30,7 @@ jobs:
       - name: Notify n8n (Success)
         if: success()
         run: |
-          curl -X POST ${{ secrets.N8N_WEBHOOK_URL }} \
+          curl -X  POST "https://python-firm-reasonably.ngrok-free.app/webhook/b4bedb3f-8035-4231-b70c-f5f6d531e7f5" \
           -H "Content-Type: application/json" \
           -d '{
             "status": "success",
@@ -43,7 +43,7 @@ jobs:
       - name: Notify n8n (Failure)
         if: failure()
         run: |
-          curl -X POST ${{ secrets.N8N_WEBHOOK_URL }} \
+          curl -X  POST "https://python-firm-reasonably.ngrok-free.app/webhook/b4bedb3f-8035-4231-b70c-f5f6d531e7f5" \
           -H "Content-Type: application/json" \
           -d '{
             "status": "failure",
